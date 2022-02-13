@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Resource;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.CacheControlDirective;
@@ -26,7 +25,6 @@ public class SampleClient {
         LoggingInterceptor logger = new LoggingInterceptor(false);
         client.registerInterceptor(logger);
 
-        // Search for Patient resources
         basicTasks(client);
         
         client.unregisterInterceptor(logger);
@@ -39,6 +37,7 @@ public class SampleClient {
      * ii) Sort the output so that the results are ordered by the patient's first name
      */
     public static void basicTasks(IGenericClient client) {
+    	 //Search for Patient resources
     	 Bundle response = client
                  .search()
                  .forResource("Patient")
@@ -46,14 +45,7 @@ public class SampleClient {
                  .returnBundle(Bundle.class)
                  .execute();
     	
-    	List<Patient> patientList = new ArrayList<>();
-        for (BundleEntryComponent bundleData : response.getEntry()) {
-        	Resource r = bundleData.getResource();
-        	if (r instanceof Patient) {
-        		Patient p = (Patient) r;
-        		patientList.add(p);
-        	}
-        }
+    	List<Patient> patientList = response.getEntry().stream().map(e -> e.getResource()).filter(r -> r instanceof Patient).map(r -> (Patient) r).collect(Collectors.toList());
     	
     	System.out.println("Details of all patients:::");
         Collections.sort(patientList, (p1, p2) -> {
