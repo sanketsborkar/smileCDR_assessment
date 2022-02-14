@@ -40,6 +40,24 @@ public class SampleClientTest {
 	}
 
 	@Test
+	public void testBasicTasksWithNoResponse() {
+	    Mockito.doNothing().when(sampleClient).basicTasks(Mockito.any(IGenericClient.class));
+	    
+	    IGenericClient iGenericClient = Mockito.mock(IGenericClient.class, Mockito.RETURNS_DEEP_STUBS);
+	    Mockito.lenient().when(iGenericClient
+                 .search()
+                 .forResource(Mockito.anyString())
+                 .where(Patient.FAMILY.matches().value(Mockito.anyString()))
+                 .returnBundle(Bundle.class)
+                 .execute())
+	    		 .thenReturn(null);
+	    
+	    sampleClient.basicTasks(iGenericClient);
+	 
+	    Mockito.verify(sampleClient, Mockito.times(1)).basicTasks(iGenericClient);
+	}
+	
+	@Test
 	public void testIntermediateTasks() throws IOException {
 		Mockito.lenient().when(sampleClient.displayAverageResponseTime(Mockito.any(IGenericClient.class), Mockito.anyBoolean())).thenReturn(600.0);
 		

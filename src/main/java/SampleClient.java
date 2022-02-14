@@ -46,6 +46,9 @@ public class SampleClient {
                  .returnBundle(Bundle.class)
                  .execute();
     	
+    	if (response == null)
+    		return;
+    	 
     	List<Patient> patientList = response.getEntry().stream().map(e -> e.getResource()).filter(r -> r instanceof Patient).map(r -> (Patient) r).collect(Collectors.toList());
     	
     	System.out.println("Details of all patients:::");
