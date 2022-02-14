@@ -25,18 +25,19 @@ public class SampleClient {
         LoggingInterceptor logger = new LoggingInterceptor(false);
         client.registerInterceptor(logger);
 
-        basicTasks(client);
+        SampleClient sampleClient = new SampleClient();
+        sampleClient.basicTasks(client);
         
         client.unregisterInterceptor(logger);
         
-        intermediateTasks(client);
+        sampleClient.intermediateTasks(client);
     }
     
     /* 1. Basic tasks
      * i) Modify SampleClient so that it prints the first and last name, and birth date of each Patient to the screen
      * ii) Sort the output so that the results are ordered by the patient's first name
      */
-    public static void basicTasks(IGenericClient client) {
+    public void basicTasks(IGenericClient client) {
     	 //Search for Patient resources
     	 Bundle response = client
                  .search()
@@ -67,13 +68,13 @@ public class SampleClient {
      * 		The third time the loop of 20 searches is run, the searches should be performed with caching disabled.
      * v) If there is enough time between runs, you should expect to see loop 2 with a shorter average response time than loop 1 and 3.
      */
-    public static void intermediateTasks(IGenericClient client) throws IOException {
+    public void intermediateTasks(IGenericClient client) throws IOException {
     	System.out.println("Avg response time of loop 1::"+displayAverageResponseTime(client, true));
     	System.out.println("Avg response time of loop 2::"+displayAverageResponseTime(client, true));
     	System.out.println("Avg response time of loop 3::"+displayAverageResponseTime(client, false));
     }
     
-    public static double displayAverageResponseTime(IGenericClient client, boolean isCacheEnabled) throws IOException {
+    public double displayAverageResponseTime(IGenericClient client, boolean isCacheEnabled) throws IOException {
     	Timer t = new Timer();
     	client.registerInterceptor(t);
     	
